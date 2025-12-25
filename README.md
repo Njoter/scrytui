@@ -4,6 +4,8 @@ scrytui
 A fast Terminal User Interface (TUI) for browsing Magic: The Gathering cards
 using the Scryfall API.
 
+This package is very much WiP.
+
 Installation
 ------------
 ### From crates.io (coming soon)
@@ -19,14 +21,11 @@ Features
 
 Usage
 -----
-### search for cards
-        scrytui "pack rat"
+### Search for exact name
+        scrytui get "pack rat"
 
-### Output JSON
-        scrytui "Rodolf" --json
-
-### Pagination
-        scrytui "Swamp --page 2"
+### Search for fuzzy name
+        scrytui fuzzy "pack rack"
 
 License
 -------
