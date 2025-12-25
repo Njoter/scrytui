@@ -15,19 +15,18 @@ Installation
 Features
 --------
 *   Search MTG cards by name
-*   Paginate through results
 *   Display card details
 
 Usage
 -----
 ### search for cards
-scrytui "pack rat"
+        scrytui "pack rat"
 
 ### Output JSON
-scrytui "Rodolf" --json
+        scrytui "Rodolf" --json
 
 ### Pagination
-scrytui "Swamp --page 2"
+        scrytui "Swamp --page 2"
 
 License
 -------
