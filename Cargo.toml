@@ -1,0 +1,18 @@
+[package]
+name = "scrytui"
+version = "0.1.0"
+edition = "2024"
+authors = ["Njoter <stianovesen@proton.me>"]
+description = "A fast Terminal User Interface (TUI) to browse Magic: The Gathering cards using the Scryfall API"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Njoter/scrytui.git"
+readme = "README.md"
+keywords = ["mtg", "tui", "magic", "cards", "terminal"]
+categories = ["command-line-utilities", "games"]
+
+[dependencies]
+reqwest = "0.12"
+tokio = { version = "1.37", features = ["full"] }
+clap = { version = "4.4", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
