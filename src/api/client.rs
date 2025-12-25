@@ -1,6 +1,8 @@
 use reqwest::Client;
 use reqwest::header::{HeaderMap, HeaderValue, USER_AGENT, ACCEPT};
 
+use crate::models::card::{ApiResponse, Card};
+
 pub struct ScryfallClient {
     client: Client,
     base_url: String,
@@ -31,20 +33,35 @@ impl ScryfallClient {
         }
     }
 
-    pub async fn search_by_name(&self, name: &str, page: u32) -> Result<String, reqwest::Error> {
-        let url = format!("{}/cards/search", self.base_url);
+    pub async fn search_by_exact_name(&self, name: &str) -> Result<ApiResponse, Box<dyn std::error::Error>> {
+        self.fetch_single_card("exact", name).await
+    }
+
+    pub async fn search_by_fuzzy_name(&self, name: &str) -> Result<ApiResponse, Box<dyn std::error::Error>> {
+        self.fetch_single_card("fuzzy", name).await
+    }
+
+    async fn fetch_single_card(&self, search_type: &str,  name: &str) -> Result<ApiResponse, Box<dyn std::error::Error>> {
+        let url = format!("{}/cards/named", self.base_url);
 
         let response = self.client
             .get(&url)
-            .query(&[("q", format!("name:\"{}\"", name)), ("page", page.to_string()), ])
+            .query(&[(&search_type, &name)])
             .send()
             .await?;
 
-        // If 2xx: return Ok(original response)
-        // If error: return Err(reqwest::Error) with status info
         let response = response.error_for_status()?;
-
         let body = response.text().await?;
-        Ok(body)
+
+        let card: Card = serde_json::from_str(&body)?;
+
+        let api_response = ApiResponse {
+            object: "list".to_string(),
+            total_cards: 1,
+            has_more: false,
+            cards: vec![card],
+        };
+
+        Ok(api_response)
     }
 }

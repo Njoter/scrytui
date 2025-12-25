@@ -7,10 +7,10 @@ using the Scryfall API.
 Installation
 ------------
 ### From crates.io (coming soon)
-cargo install scrytui
+        cargo install scrytui
 
 ### From source
-cargo install --git https://github.com/Njoter/scrytui
+        cargo install --git https://github.com/Njoter/scrytui
 
 Features
 --------
