@@ -16,7 +16,7 @@ pub struct Card {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct ApiResponse {
+pub struct CardResponse {
     pub object: String,
     pub total_cards: u32,
     pub has_more: bool,

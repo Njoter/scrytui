@@ -1,7 +1,7 @@
 use reqwest::Client;
 use reqwest::header::{HeaderMap, HeaderValue, USER_AGENT, ACCEPT};
 
-use crate::models::card::{ApiResponse, Card};
+use crate::models::card::{CardResponse, Card};
 
 pub struct ScryfallClient {
     client: Client,
@@ -33,15 +33,31 @@ impl ScryfallClient {
         }
     }
 
-    pub async fn search_by_exact_name(&self, name: &str) -> Result<ApiResponse, Box<dyn std::error::Error>> {
+    pub async fn search_cards(&self, query: &str, page: u32) -> Result<CardResponse, Box<dyn std::error::Error>> {
+        let url = format!("{}/cards/search", self.base_url);
+
+        let response = self.client
+            .get(&url)
+            .query(&[("q", query), ("page", &page.to_string())])
+            .send()
+            .await?;
+
+        let response = response.error_for_status()?;
+        let body = response.text().await?;
+        let card_response = serde_json::from_str(&body)?;
+
+        Ok(card_response)
+    }
+
+    pub async fn search_by_exact_name(&self, name: &str) -> Result<CardResponse, Box<dyn std::error::Error>> {
         self.fetch_single_card("exact", name).await
     }
 
-    pub async fn search_by_fuzzy_name(&self, name: &str) -> Result<ApiResponse, Box<dyn std::error::Error>> {
+    pub async fn search_by_fuzzy_name(&self, name: &str) -> Result<CardResponse, Box<dyn std::error::Error>> {
         self.fetch_single_card("fuzzy", name).await
     }
 
-    async fn fetch_single_card(&self, search_type: &str,  name: &str) -> Result<ApiResponse, Box<dyn std::error::Error>> {
+    async fn fetch_single_card(&self, search_type: &str,  name: &str) -> Result<CardResponse, Box<dyn std::error::Error>> {
         let url = format!("{}/cards/named", self.base_url);
 
         let response = self.client
@@ -52,16 +68,13 @@ impl ScryfallClient {
 
         let response = response.error_for_status()?;
         let body = response.text().await?;
-
         let card: Card = serde_json::from_str(&body)?;
 
-        let api_response = ApiResponse {
+        Ok(CardResponse { 
             object: "list".to_string(),
             total_cards: 1,
             has_more: false,
-            cards: vec![card],
-        };
-
-        Ok(api_response)
+            cards: vec![card]
+        })
     }
 }
